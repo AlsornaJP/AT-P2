@@ -14,3 +14,4 @@ Todas as respostas geradas com apoio de IA foram revisadas e validadas por mim.
 |---|---|---|---|
 | 1 | Configuração do ambiente com uv, código do agente e texto discursivo | Claude Code | Claude Opus 5 |
 | 1 | Parte do corpo da função `formatar_resposta` (linha que mostra a resposta) | Antigravity (Tab Completion) | Gemini 3.6 Flash |
+| 2 | Código da conversa multi-turno e dos testes de parâmetros, texto discursivo | Claude Code | Claude Opus 5 |
