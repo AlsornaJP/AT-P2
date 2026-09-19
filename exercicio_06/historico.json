@@ -1,0 +1,117 @@
+[
+  {
+    "codigo": "CMP-100",
+    "manutencoes": [
+      {
+        "data": "2026-01-11",
+        "servico": "limpeza do radiador de óleo",
+        "tecnico": "Ana Prado",
+        "horas_paradas": 8
+      },
+      {
+        "data": "2026-02-12",
+        "servico": "troca da correia de transmissão",
+        "tecnico": "Marcos Lima",
+        "horas_paradas": 1
+      },
+      {
+        "data": "2026-03-13",
+        "servico": "reaperto das conexões do painel",
+        "tecnico": "Marcos Lima",
+        "horas_paradas": 4
+      }
+    ]
+  },
+  {
+    "codigo": "TRN-300",
+    "manutencoes": [
+      {
+        "data": "2026-01-11",
+        "servico": "reaperto das conexões do painel",
+        "tecnico": "Marcos Lima",
+        "horas_paradas": 2
+      },
+      {
+        "data": "2026-02-12",
+        "servico": "troca do filtro de ar",
+        "tecnico": "Marcos Lima",
+        "horas_paradas": 8
+      },
+      {
+        "data": "2026-03-13",
+        "servico": "calibração do sensor de temperatura",
+        "tecnico": "Marcos Lima",
+        "horas_paradas": 2
+      }
+    ]
+  },
+  {
+    "codigo": "EST-450",
+    "manutencoes": [
+      {
+        "data": "2026-01-11",
+        "servico": "troca do filtro de ar",
+        "tecnico": "Juliana Alves",
+        "horas_paradas": 1
+      },
+      {
+        "data": "2026-02-12",
+        "servico": "reaperto das conexões do painel",
+        "tecnico": "Marcos Lima",
+        "horas_paradas": 2
+      },
+      {
+        "data": "2026-03-13",
+        "servico": "troca da correia de transmissão",
+        "tecnico": "Marcos Lima",
+        "horas_paradas": 8
+      }
+    ]
+  },
+  {
+    "codigo": "FRN-720",
+    "manutencoes": [
+      {
+        "data": "2026-01-11",
+        "servico": "troca do filtro de ar",
+        "tecnico": "Ana Prado",
+        "horas_paradas": 1
+      },
+      {
+        "data": "2026-02-12",
+        "servico": "reaperto das conexões do painel",
+        "tecnico": "Ana Prado",
+        "horas_paradas": 4
+      },
+      {
+        "data": "2026-03-13",
+        "servico": "calibração do sensor de temperatura",
+        "tecnico": "Ana Prado",
+        "horas_paradas": 1
+      }
+    ]
+  },
+  {
+    "codigo": "BMB-210",
+    "manutencoes": [
+      {
+        "data": "2026-01-11",
+        "servico": "reaperto das conexões do painel",
+        "tecnico": "Carlos Ferreira",
+        "horas_paradas": 2
+      },
+      {
+        "data": "2026-02-12",
+        "servico": "troca do filtro de ar",
+        "tecnico": "Ana Prado",
+        "horas_paradas": 4
+      },
+      {
+        "data": "2026-03-13",
+        "servico": "troca do filtro de ar",
+        "tecnico": "Marcos Lima",
+        "horas_paradas": 1
+      }
+    ]
+  }
+]

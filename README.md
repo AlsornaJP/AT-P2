@@ -18,3 +18,4 @@ Todas as respostas geradas com apoio de IA foram revisadas e validadas por mim.
 | 3 | Código do agente de diagnóstico, system message com regras de segurança, texto discursivo | Claude Code | Claude Opus 5 |
 | 4 | Código de seleção de modelos, streaming, métricas e texto discursivo | Claude Code | Claude Opus 5 |
 | 5 | Gerador do manual em JSON, ferramenta consultar_manual_equipamento e texto discursivo | Claude Code | Claude Opus 5 |
+| 6 | Segunda ferramenta, controle de tool_choice/stop_on_first_tool, histórico e texto discursivo | Claude Code | Claude Opus 5 |
