@@ -16,3 +16,4 @@ Todas as respostas geradas com apoio de IA foram revisadas e validadas por mim.
 | 1 | Parte do corpo da função `formatar_resposta` (linha que mostra a resposta) | Antigravity (Tab Completion) | Gemini 3.6 Flash |
 | 2 | Código da conversa multi-turno e dos testes de parâmetros, texto discursivo | Claude Code | Claude Opus 5 |
 | 3 | Código do agente de diagnóstico, system message com regras de segurança, texto discursivo | Claude Code | Claude Opus 5 |
+| 4 | Código de seleção de modelos, streaming, métricas e texto discursivo | Claude Code | Claude Opus 5 |
