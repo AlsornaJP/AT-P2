@@ -19,7 +19,7 @@ Os dois acertaram a classificação, com respostas praticamente iguais. O modelo
 
 **Triagem simples: modelo barato (`gemini-3.1-flash-lite`).**
 
-- **Custo:** a triagem é a tarefa mais repetida do sistema. Com dez filiais abrindo chamados o dia inteiro, o volume é grande. Como o resultado foi o mesmo, pagar quatro vezes mais por chamado não traz retorno.
+- **Custo:** a triagem é a tarefa mais repetida do sistema. Com dez filiais abrindo chamados o dia inteiro, o volume é grande. Como o resultado foi o mesmo, pagar cinco vezes mais por chamado não traz retorno.
 - **Latência:** o técnico está no campo esperando a resposta. Cerca de 2 segundos contra 3,2 segundos faz diferença na fila de chamados.
 - **Qualidade:** classificar um chamado em três níveis é uma tarefa fácil. As duas respostas foram equivalentes, o que mostra que o modelo maior está sobrando aqui.
 
