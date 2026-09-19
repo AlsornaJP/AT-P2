@@ -1,0 +1,107 @@
+[
+  {
+    "codigo": "CMP-100",
+    "nome": "Compressor de Parafuso Andrade AR-7",
+    "erros_conhecidos": [
+      {
+        "codigo_erro": "E-101",
+        "causa_provavel": "filtro de ar saturado",
+        "acao_recomendada": "parar o equipamento e abrir chamado para a manutenção elétrica"
+      },
+      {
+        "codigo_erro": "E-102",
+        "causa_provavel": "válvula termostática travada",
+        "acao_recomendada": "substituir o componente e registrar a troca no histórico"
+      },
+      {
+        "codigo_erro": "E-103",
+        "causa_provavel": "falta de lubrificação no mancal",
+        "acao_recomendada": "substituir o componente e registrar a troca no histórico"
+      }
+    ]
+  },
+  {
+    "codigo": "TRN-300",
+    "nome": "Torno CNC Andrade T-300",
+    "erros_conhecidos": [
+      {
+        "codigo_erro": "E-201",
+        "causa_provavel": "filtro de ar saturado",
+        "acao_recomendada": "parar o equipamento e abrir chamado para a manutenção elétrica"
+      },
+      {
+        "codigo_erro": "E-202",
+        "causa_provavel": "excesso de carga na partida",
+        "acao_recomendada": "aguardar o resfriamento e conferir o aperto das conexões"
+      },
+      {
+        "codigo_erro": "E-203",
+        "causa_provavel": "sensor de temperatura descalibrado",
+        "acao_recomendada": "parar o equipamento e abrir chamado para a manutenção elétrica"
+      }
+    ]
+  },
+  {
+    "codigo": "EST-450",
+    "nome": "Esteira Transportadora Andrade E-450",
+    "erros_conhecidos": [
+      {
+        "codigo_erro": "E-301",
+        "causa_provavel": "filtro de ar saturado",
+        "acao_recomendada": "substituir o componente e registrar a troca no histórico"
+      },
+      {
+        "codigo_erro": "E-302",
+        "causa_provavel": "falta de lubrificação no mancal",
+        "acao_recomendada": "parar o equipamento e abrir chamado para a manutenção elétrica"
+      },
+      {
+        "codigo_erro": "E-303",
+        "causa_provavel": "vazamento na linha de pressão",
+        "acao_recomendada": "substituir o componente e registrar a troca no histórico"
+      }
+    ]
+  },
+  {
+    "codigo": "FRN-720",
+    "nome": "Forno de Tratamento Térmico Andrade F-720",
+    "erros_conhecidos": [
+      {
+        "codigo_erro": "E-401",
+        "causa_provavel": "vazamento na linha de pressão",
+        "acao_recomendada": "aguardar o resfriamento e conferir o aperto das conexões"
+      },
+      {
+        "codigo_erro": "E-402",
+        "causa_provavel": "falta de lubrificação no mancal",
+        "acao_recomendada": "aguardar o resfriamento e conferir o aperto das conexões"
+      },
+      {
+        "codigo_erro": "E-403",
+        "causa_provavel": "excesso de carga na partida",
+        "acao_recomendada": "limpar o conjunto e medir novamente antes de religar"
+      }
+    ]
+  },
+  {
+    "codigo": "BMB-210",
+    "nome": "Bomba Centrífuga Andrade B-210",
+    "erros_conhecidos": [
+      {
+        "codigo_erro": "E-501",
+        "causa_provavel": "sensor de temperatura descalibrado",
+        "acao_recomendada": "substituir o componente e registrar a troca no histórico"
+      },
+      {
+        "codigo_erro": "E-502",
+        "causa_provavel": "rolamento com folga acima do limite",
+        "acao_recomendada": "limpar o conjunto e medir novamente antes de religar"
+      },
+      {
+        "codigo_erro": "E-503",
+        "causa_provavel": "válvula termostática travada",
+        "acao_recomendada": "substituir o componente e registrar a troca no histórico"
+      }
+    ]
+  }
+]
