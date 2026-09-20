@@ -50,11 +50,15 @@ A similaridade de cosseno está escrita à mão, em Python puro, sem biblioteca 
 
 ## 5. O agente respondendo
 
-Só então entra o agente do SDK, com uma ferramenta chamada `buscar_no_manual`, que faz exatamente a busca da seção anterior e devolve os três trechos mais parecidos. A instrução manda responder apenas com o que estiver nesses trechos e citar o número do trecho usado.
+Só então entra o agente do SDK, com uma ferramenta chamada `buscar_no_manual`, que faz exatamente a busca da seção anterior e devolve os três trechos mais parecidos. A instrução manda responder apenas com o que estiver nesses trechos, citar o número do trecho usado e avisar quando a informação não estiver lá.
 
-O agente respondeu: quarenta e cinco newton-metro, em duas etapas, com sequência cruzada do centro para as bordas, citando o trecho 9.
+O agente recuperou o trecho 9 em primeiro lugar e respondeu com o valor certo: quarenta e cinco newton-metro, aplicados em duas etapas, com sequência cruzada do centro para as bordas, citando o trecho 9.
 
-Duas coisas valem ser notadas nessa resposta. A primeira é que o número está certo, apesar do distrator: o trecho 9 contém **os dois** valores de torque, o de 45 do cabeçote e o de 80 da base, e o agente escolheu o certo, porque a pergunta era sobre os parafusos de cima. A segunda é que ele citou a fonte, o que num painel de despacho real permitiria ao técnico conferir no manual.
+O jeito como ele respondeu merece atenção, porque não foi o esperado e ficou melhor do que o esperado. Em vez de afirmar que "tampa superior" é o cabeçote, ele **avisou que o manual não usa o termo "tampa superior"**, deu o torque dos parafusos do cabeçote que encontrou no trecho 9, e terminou dizendo que, se a tampa for outra peça, a informação não está no manual.
+
+Isso é a instrução funcionando. Eu mandei responder apenas com o que estiver nos trechos e avisar quando não encontrar, e ele levou a sério: não inventou a equivalência entre o vocabulário do técnico e o do manual, só apontou a correspondência provável e deixou a conferência para a pessoa. Num manual de manutenção, em que apertar o parafuso errado com o torque errado estraga equipamento, essa cautela é o comportamento desejado.
+
+Vale notar também que o agente não caiu no distrator. O trecho 9 contém **os dois** valores de torque, os 45 do cabeçote e os 80 da base, e ele trouxe só o que correspondia aos parafusos de cima.
 
 ## 6. O agente reescreve a pergunta, e isso é normal
 
@@ -76,10 +80,14 @@ Nos prints dá para comparar as duas buscas lado a lado: a da seção 4 recebeu 
 
 ## 8. Evidências
 
-*(inserir o print depois de tirá-lo)*
+Os dois prints são da mesma execução, que não cabia em uma tela só.
 
-- Print – a execução completa: `prints/...`
-  - **Parte 1:** a tabela dos 14 trechos, com tamanho e parágrafos de origem, e a confirmação de que o torque do cabeçote caiu nos trechos 8 e 9, por causa da sobreposição.
-  - **Parte 2:** os 14 vetores de 768 dimensões gerados numa chamada só.
-  - **Parte 3:** a busca por palavra-chave achando só a palavra "compressor" e não trazendo o trecho certo, contra a busca semântica pondo os trechos 9 e 8 em primeiro e segundo lugar.
-  - **Parte 4:** o agente citando o trecho 9 e respondendo quarenta e cinco newton-metro, sem cair no distrator dos oitenta.
+- Print 1 – `prints/Screenshot_20260920_103814.png`: as Partes 1, 2 e 3.
+  - A tabela dos 14 trechos, com tamanho e parágrafos de origem, e a confirmação de que o torque do cabeçote caiu nos trechos 8 e 9, por causa da sobreposição.
+  - Os 14 vetores de 768 dimensões gerados numa chamada só.
+  - A busca por palavra-chave achando só a palavra "compressor", com a resposta explícita `o trecho com o torque do cabeçote entrou nos 3 primeiros? NÃO`.
+  - A busca semântica logo abaixo, com os trechos 9 e 8 em primeiro e segundo lugar, com notas de 0,7575 e 0,7036.
+- Print 2 – `prints/Screenshot_20260920_103819.png`: a rolagem da mesma execução até a Parte 4.
+  - A pergunta que o agente enviou à ferramenta, já reescrita por ele: `força aperto parafusos tampa superior compressor CMP-100`.
+  - O ranking da busca feita pelo agente, também com o trecho 9 em primeiro lugar.
+  - A resposta final, com os 45 N·m, a citação do trecho 9 e a ressalva sobre o termo "tampa superior" não existir no manual.
