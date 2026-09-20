@@ -30,7 +30,7 @@ A segunda parte resolve essa queixa com a `SQLiteSession`, gravando em `exercici
 
 **Na segunda execução,** que é um processo totalmente novo, o programa já começa diferente: antes de perguntar qualquer coisa, ele encontra as 4 mensagens no arquivo e anuncia que esta é a segunda execução. Nada disso veio da memória, porque memória não existe mais — veio do disco.
 
-A pergunta de acompanhamento é "Qual era mesmo a ação recomendada para aquele erro?". Ela não diz o equipamento, não diz o código do erro, não diz nada. O agente respondeu "aguardar o resfriamento do forno e conferir o aperto das conexões", que é o que o manual traz para o E-401 do FRN-720.
+A pergunta de acompanhamento é "Qual era mesmo a ação recomendada para aquele erro?". Ela não diz o equipamento, não diz o código do erro, não diz nada. O agente respondeu "aguardar o resfriamento do equipamento e conferir o aperto das conexões", que é o que o manual traz para o E-401 do FRN-720.
 
 Ao final, a sessão passa a ter 6 mensagens. Cresceu de 2, e não de 4 como na primeira execução, porque desta vez não houve chamada de ferramenta: entrou só a pergunta e a resposta.
 
@@ -56,7 +56,5 @@ Uma consequência prática: para repetir a demonstração do zero, é preciso ap
 
 ## 5. Evidências
 
-*(inserir os prints depois de tirá-los)*
-
-- Print 1 – primeira execução: o aviso de que nenhuma mensagem foi encontrada, as três rodadas da Parte 1 com a lista crescendo de 1 para 8 itens e as perguntas incompletas sendo respondidas certo, e a Parte 2 gravando as 4 primeiras mensagens no arquivo: `prints/...`
-- Print 2 – segunda execução: o mesmo comando encontrando as 4 mensagens em disco, reconhecendo que é a segunda execução, e a pergunta de acompanhamento respondida sem o técnico repetir o contexto e sem nenhuma chamada da ferramenta: `prints/...`
+- Print 1 – `prints/Screenshot_20260920_100918.png`: a primeira execução, começando pelo `rm` do arquivo de sessão para garantir que ela é mesmo a primeira. Mostra o aviso de que nenhuma mensagem foi encontrada, as três rodadas da Parte 1 com a lista indo de 1 para 4, 6 e 8 itens, as perguntas incompletas sendo respondidas certo, e a Parte 2 gravando as 4 primeiras mensagens no arquivo.
+- Print 2 – `prints/Screenshot_20260920_101329.png`: a segunda execução. Este print é o mais importante do exercício, porque mostra as **duas** execuções na mesma tela: o fim da primeira, e logo abaixo o mesmo comando digitado de novo, agora encontrando 4 mensagens em disco, anunciando que é a segunda execução e respondendo a pergunta de acompanhamento sem o técnico repetir o contexto. Note que não aparece nenhuma linha de chamada da ferramenta, e que a sessão termina com 6 mensagens, tendo crescido de 2.
