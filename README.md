@@ -26,3 +26,4 @@ Todas as respostas geradas com apoio de IA foram revisadas e validadas por mim.
 | 11 | Agente com sessão e RAG juntos, experimento desligando cada metade, diagnóstico da busca e avaliação de estratégia | Claude Code | Claude Opus 5 |
 | 12 | Serviço FastAPI com modelos Pydantic de entrada e saída, BackgroundTasks e cliente de teste, e texto discursivo | Claude Code | Claude Opus 5 |
 | 13 | Endpoints POST /agent/run e GET /agent/status/{task_id}, registro de tarefas com pending/done/error e texto discursivo | Claude Code | Claude Opus 5 |
+| 14 | Serviço REST completo com os três endpoints, agente integrador com as duas fontes, tratamento de task_id inexistente e texto discursivo | Claude Code | Claude Opus 5 |
