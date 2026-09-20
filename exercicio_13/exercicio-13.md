@@ -24,7 +24,7 @@ A diferença para o Exercício 12 é que lá o identificador não servia para na
 
 O motivo é uma corrida. Se a entrada fosse criada só quando a tarefa de fundo começasse, haveria um instante em que o sistema de despacho já teria o `task_id` em mãos e a consulta ainda não encontraria nada. É curto, mas é o tipo de intervalo em que um sistema rápido cai. Criando a entrada antes de responder, o `task_id` já é consultável no instante em que é entregue.
 
-O print comprova: a primeira consulta do cliente acontece a 0,0 segundo do POST e já devolve `pending`.
+O print comprova: nos dois casos, a primeira consulta do cliente acontece a 0,0 segundo do POST e já devolve `pending`.
 
 ## 3. Os três estados
 
@@ -48,11 +48,17 @@ Vale notar uma coisa que o print mostra: a tarefa com erro falhou em **0,3 segun
 
 ## 5. O que a execução mostrou
 
-**Caso 1, o caminho normal.** O POST respondeu em 0,003 segundos com o `task_id` `ce2d9ba9` e o estado `pending`. A primeira consulta, imediata, devolveu `pending`. A segunda, três segundos depois, devolveu `done`, com a resposta sobre os intervalos de troca do óleo: primeira troca em 500 horas, depois a cada 4.000 horas ou 12 meses. O log do serviço mostra que o agente consultou o manual e levou 1,9 segundo.
+**Caso 1, o caminho normal.** O POST respondeu em **0,004 segundos** com o `task_id` `bb000c9c` e o estado `pending`. O cliente passou a consultar de três em três segundos, e o resultado é a demonstração mais limpa do padrão:
 
-**Caso 2, a falha.** O POST respondeu igualmente rápido, com o `task_id` `8f5fc019`. A primeira consulta devolveu `pending`; a segunda, `error`, com a mensagem do provedor guardada. O serviço continuou no ar normalmente: a falha ficou contida dentro da tarefa.
+As consultas 1 a 8, de 0,0 até 21,0 segundos, devolveram `pending`. A consulta 9, aos 24,0 segundos, devolveu `done`, com a resposta sobre os intervalos de troca: primeira troca de óleo com 500 horas, e depois óleo e elemento separador a cada 4.000 horas ou 12 meses.
 
-Nos dois casos o sistema de despacho foi liberado em milésimos de segundo e voltou para consultar quando quis. É exatamente o que o contexto do enunciado pede.
+No log do serviço dá para ver o que acontecia enquanto isso: o agente consultou o manual, trouxe os trechos 5, 13, 4, 12 e 1, e levou **23,4 segundos** para responder. Durante esse tempo o serviço atendeu oito consultas de status sem dificuldade nenhuma, todas com 200, intercaladas com o trabalho do agente.
+
+Esse é o ponto do exercício em uma frase: o sistema de despacho fez uma chamada de 4 milésimos de segundo e foi embora, voltando oito vezes para perguntar se já estava pronto, enquanto o serviço trabalhava 23 segundos por baixo.
+
+**Caso 2, a falha.** O POST respondeu em 0,005 segundos com o `task_id` `d0f2d328`. A primeira consulta devolveu `pending`; a segunda, `error`. A tarefa falhou em **0,3 segundo**, bem antes das que dão certo, porque o provedor recusa o nome do modelo logo na primeira chamada, sem processar nada.
+
+O serviço continuou no ar normalmente depois da falha: ela ficou contida dentro da tarefa, que é exatamente o que o `try/except` garante.
 
 ## 6. Uma coisa deliberadamente não tratada
 
@@ -70,12 +76,6 @@ O registro de tarefas é um dicionário na memória do processo: some quando o s
 
 ## 8. Evidências
 
-*(inserir os prints depois de tirá-los)*
-
-- Print – o terminal do cliente: `prints/...`
-  - Caso 1: o POST respondendo em 0,003 s com 202 e o `task_id`, a consulta 1 em `pending`, a consulta 2 em `done`, e a resposta do agente.
-  - Caso 2: o mesmo padrão terminando em `error`, com a mensagem do provedor.
-- Print – o terminal do serviço: `prints/...`
-  - O arranque indexando os trechos.
-  - Para cada tarefa: o `202 Accepted`, o `[fundo] começou (estado atual: pending)`, as linhas de consulta mostrando o estado mudando, e o desfecho `-> done` ou `-> error`.
-  - Os `200 OK` das consultas de status intercalados com o trabalho do agente.
+- **`prints/Screenshot_20260920_132008.png`** – os dois terminais na mesma imagem, o serviço à esquerda e o cliente à direita. Os identificadores `bb000c9c` e `d0f2d328` aparecem nos dois lados, o que amarra as duas metades como sendo a mesma execução.
+  - **No serviço:** o arranque indexando os 14 trechos em 1,12 s; o `202 Accepted` registrado **antes** do `[fundo] começou (estado atual: pending)`; a sequência de `[GET /agent/status] bb000c9c: pending` com os respectivos 200, intercalada com a busca no manual; o `[fundo] bb000c9c: terminou em 23.4s -> done`; e depois, para a segunda tarefa, o `[fundo] d0f2d328: falhou em 0.3s -> error` com a mensagem `NotFoundError: 404 - models/modelo-que-nao-existe is not found`.
+  - **No cliente:** o POST devolvendo 202 com o `task_id` em 0,004 s; as consultas 1 a 8 em `pending` e a 9 em `done`, com a resposta do agente; e o Caso 2 passando de `pending` para `error`, com a mensagem do provedor guardada.
