@@ -28,9 +28,9 @@ Funcionou: no teste com o código inválido, a lista voltou com zero peças.
 
 Para mostrar que a ferramenta assíncrona serve para alguma coisa, as duas perguntas do enunciado, a do código válido e a do inválido, são disparadas juntas com `asyncio.gather`, no mesmo agente.
 
-Cada pergunta imprime em que segundo começou e em que segundo terminou, contados do início do programa. Na execução registrada no print, as duas começaram em 0,0 segundo; a Pergunta B terminou em 5,8 segundos enquanto a Pergunta A ainda estava rodando; e a A terminou em 22,6 segundos.
+Cada pergunta imprime em que segundo começou e em que segundo terminou, contados do início do programa. Na execução registrada no print, as duas começaram em 0,0 segundo; a Pergunta B terminou em 4,9 segundos enquanto a Pergunta A ainda estava rodando; e a A terminou em 13,0 segundos.
 
-É isso que prova a simultaneidade. Se as perguntas fossem feitas uma depois da outra, a segunda só poderia começar depois que a primeira terminasse, e nenhuma das duas mostraria começo em 0,0 segundo. O tempo total, 22,6 segundos, é o da pergunta mais demorada, e não a soma das duas.
+É isso que prova a simultaneidade. Se as perguntas fossem feitas uma depois da outra, a segunda só poderia começar depois que a primeira terminasse, e nenhuma das duas mostraria começo em 0,0 segundo. O tempo total, 13,0 segundos, é o da pergunta mais demorada, e não a soma das duas: em sequência, o programa teria levado perto de 18 segundos.
 
 Um detalhe que aparece no print e vale explicar: as linhas da ferramenta saem fora de ordem, a do XYZ-999 antes da do CMP-100. Isso é normal e é consequência da simultaneidade. Quem chega primeiro imprime primeiro, e a ordem depende de qual resposta o provedor devolveu antes, não da ordem em que eu escrevi as perguntas no código.
 
@@ -58,6 +58,7 @@ A terceira é uma limitação que prefiro registrar a esconder. `prioridade` é 
 
 ## 5. Evidências
 
-*(inserir o print depois de tirá-lo)*
-
-- Print – a execução completa: as duas perguntas disparadas juntas, com os tempos de começo e fim mostrando a sobreposição; a Pergunta A com as duas peças do manual e os tipos `PecaRecomendada` e `int`; a Pergunta B com o erro tratado e a lista de peças vazia: `prints/...`
+- Print único – `prints/Screenshot_20260920_095816.png`: a execução completa.
+  - **A simultaneidade:** as duas perguntas começando em 0,0s, a Pergunta B terminando em 4,9s enquanto a A ainda roda, e a A terminando em 13,0s. As linhas da ferramenta aparecem com o XYZ-999 antes do CMP-100, fora da ordem do código, que é o efeito esperado da execução simultânea.
+  - **O aninhamento:** a Pergunta A com as duas peças do manual, mostrando os tipos `DiagnosticoEquipamento`, `PecaRecomendada` e `int`.
+  - **O erro tratado:** a linha do `failure_error_function` e a Pergunta B respondendo com 0 peças, sem inventar nada e sem quebrar a execução.
