@@ -1,0 +1,47 @@
+O Compressor de Parafuso Andrade AR-7, código CMP-100, deve ser instalado em piso de concreto curado, com espessura mínima de quinze centímetros. A base precisa suportar o peso do equipamento em operação, incluindo o reservatório cheio.
+
+O nivelamento é conferido com nível de bolha apoiado sobre a base usinada da carcaça, em duas direções perpendiculares. Desvios acima de um milímetro por metro provocam vibração e reduzem a vida útil dos mancais.
+
+Deve haver espaço livre de oitenta centímetros em todos os lados do equipamento, para circulação de ar e acesso da equipe de manutenção. A tomada de ar não pode ficar voltada para paredes ou para a saída de outro compressor.
+
+A temperatura ambiente da casa de máquinas deve ficar entre cinco e quarenta graus Celsius. Acima disso, a eficiência cai e o sistema de resfriamento passa a trabalhar no limite.
+
+O óleo recomendado é o sintético ISO VG 46, específico para compressores de parafuso. Não é permitido misturar óleos de fabricantes diferentes, mesmo que tenham a mesma classificação.
+
+O nível do óleo é conferido com o equipamento parado e frio, pelo visor lateral do reservatório. O nível correto fica entre as marcas de mínimo e máximo gravadas no visor.
+
+A primeira troca de óleo acontece com quinhentas horas de operação. As trocas seguintes seguem o intervalo de quatro mil horas, ou doze meses, o que vier primeiro.
+
+O elemento separador de óleo é trocado a cada quatro mil horas, junto com o óleo. Um separador saturado faz o consumo de óleo subir e contamina a linha de ar comprimido.
+
+A alimentação é trifásica, em trezentos e oitenta volts, com neutro e aterramento independentes. A seção dos cabos deve ser dimensionada para a corrente de partida, e não apenas para a corrente nominal.
+
+O sentido de rotação é conferido na primeira partida, com um toque rápido no botão de acionamento. A seta gravada na carcaça indica o sentido correto; rotação invertida danifica o conjunto de parafusos em poucos segundos.
+
+O relé térmico é ajustado para a corrente nominal indicada na placa do motor, acrescida de dez por cento. Ajustes acima disso deixam o motor sem proteção contra sobrecarga.
+
+O painel elétrico deve permanecer fechado durante a operação. A abertura com o equipamento energizado só é permitida para pessoal treinado, com os equipamentos de proteção exigidos pela norma interna.
+
+Todo procedimento de aperto começa com a limpeza das roscas e a inspeção visual dos parafusos. Parafusos com rosca danificada, corrosão ou marcas de deformação são substituídos, nunca reaproveitados.
+
+O torque de aperto dos parafusos do cabeçote é de quarenta e cinco newton-metro, aplicado em duas etapas: primeiro metade do valor em todos os parafusos, depois o valor cheio. A sequência de aperto é cruzada, do centro para as bordas, e o torquímetro deve estar calibrado.
+
+Os parafusos de fixação da base seguem torque de oitenta newton-metro, aplicado em uma única etapa. Esse valor vale apenas para os parafusos da base, e não deve ser usado em outros pontos do equipamento.
+
+Após qualquer aperto, o equipamento roda trinta minutos em vazio e os pontos apertados são reconferidos. É comum haver pequena acomodação das juntas no primeiro aquecimento.
+
+O alarme E-101 indica filtro de ar saturado. O equipamento continua operando, mas com perda de rendimento, e o filtro deve ser trocado na primeira parada programada.
+
+O alarme E-102 indica válvula termostática travada. Nesse caso o óleo deixa de circular pelo radiador e a temperatura sobe rapidamente, o que exige parada imediata.
+
+O alarme E-103 indica falta de lubrificação no mancal. É o alarme mais grave da lista, porque a operação nessa condição leva à perda do conjunto de parafusos em poucas horas.
+
+Alarmes repetidos, mesmo que desapareçam sozinhos, devem ser registrados no histórico do equipamento com data, hora e condição de operação. O histórico é a principal ferramenta de diagnóstico de falhas intermitentes.
+
+A parada programada acontece a cada quatro mil horas e inclui troca de óleo, troca do separador, limpeza do radiador e inspeção geral das conexões.
+
+Antes de iniciar qualquer serviço, a linha de ar é despressurizada e o disjuntor é travado na posição desligada, com etiqueta de identificação do responsável pelo serviço.
+
+O radiador é limpo com ar comprimido seco, sempre no sentido contrário ao do fluxo normal de ar. O uso de água ou solventes danifica as aletas e reduz a troca térmica.
+
+Ao final da parada, o equipamento é religado em vazio por quinze minutos, e a equipe confere temperatura, pressão, nível de óleo e ausência de vazamentos antes de liberar para produção.
