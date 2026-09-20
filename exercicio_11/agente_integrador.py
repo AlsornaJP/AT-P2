@@ -38,7 +38,11 @@ LIMITE_DO_TRECHO = 600
 # o assunto da conversa, o trecho certo pode cair para 4º lugar. Com 5 ele entra.
 QUANTOS_TRECHOS_BUSCAR = 5
 JANELA_ESTREITA = 3
-SEGUNDOS_DE_PAUSA = 10
+# Pausa entre perguntas. Medindo a execução completa: 29 chamadas ao modelo em
+# 303 segundos de trabalho dão menos de 6 por minuto, contra um limite de 15.
+# Uma pausa curta basta; os erros que apareceram foram 503 de sobrecarga do
+# provedor, tratados pela retentativa, e não 429 de cota.
+SEGUNDOS_DE_PAUSA = 3
 
 TRECHOS: list[dict] = []
 VETORES: list[list[float]] = []
@@ -267,7 +271,10 @@ async def rodar_cenario(
         resultados.append(
             {"pergunta": item["pergunta"], "acertou": acertou, "usou_a_busca": usou_a_busca}
         )
-        await asyncio.sleep(SEGUNDOS_DE_PAUSA)
+
+        # Não faz sentido pausar depois da última: não vem chamada nenhuma em seguida.
+        if numero < len(perguntas):
+            await asyncio.sleep(SEGUNDOS_DE_PAUSA)
 
     return resultados
 

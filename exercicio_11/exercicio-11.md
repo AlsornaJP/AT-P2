@@ -2,7 +2,7 @@
 
 O código está em `exercicio_11/agente_integrador.py`. Para executar: `uv run exercicio_11/agente_integrador.py`
 
-O programa demora cerca de dez minutos, porque roda os mesmos cenários em várias configurações, com pausas para respeitar o limite de chamadas por minuto da conta gratuita.
+O programa roda os mesmos cenários em nove configurações, com uma pausa curta entre as perguntas para respeitar o limite de chamadas por minuto da conta gratuita. São 19 perguntas ao agente, e a execução leva poucos minutos — o grosso do tempo é a latência do provedor, cerca de 16 segundos por pergunta.
 
 ## 1. O agente integrador
 
@@ -128,7 +128,7 @@ A avaliação da seção 6 se apoia nessas partes estáveis, e não nas células
 
 ## 9. Evidências
 
-Cinco prints da mesma execução, que leva cerca de oito minutos e não cabe em uma tela.
+Cinco prints da mesma execução, que não cabe em uma tela. O tempo de 8m13s que aparece no fim do último print é de antes de eu reduzir as pausas entre as perguntas, de 10 para 3 segundos; o conteúdo da execução é o mesmo.
 
 - **`prints/Screenshot_20260920_121253.png`** – preparação e Cenário A sem memória. Os 14 trechos virando vetores de 768 dimensões; a segunda pergunta buscando "riscos de operar com óleo em condições inadequadas", que não era o que o técnico perguntou; e a terceira sendo devolvida como pergunta, com os três códigos listados. As duas contadas como acerto.
 - **`prints/Screenshot_20260920_121303.png`** – Cenário A com o agente do exercício e Cenário B. As três perguntas respondidas direto, com a segunda e a terceira marcadas `Consultou o manual? NÃO`, que é a memória trabalhando. No Cenário B, a linha `ATENÇÃO: acertou sem consultar o manual` na configuração sem busca.
