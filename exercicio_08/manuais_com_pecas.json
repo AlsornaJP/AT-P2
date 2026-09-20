@@ -1,0 +1,287 @@
+[
+  {
+    "codigo": "CMP-100",
+    "nome": "Compressor de Parafuso Andrade AR-7",
+    "erros_conhecidos": [
+      {
+        "codigo_erro": "E-101",
+        "causa_provavel": "filtro de ar saturado",
+        "acao_recomendada": "parar o equipamento e abrir chamado para a manutenção elétrica",
+        "pecas_recomendadas": [
+          {
+            "nome": "elemento filtrante de ar",
+            "quantidade": 2,
+            "prioridade": "alta"
+          },
+          {
+            "nome": "junta de vedação do filtro",
+            "quantidade": 2,
+            "prioridade": "media"
+          }
+        ]
+      },
+      {
+        "codigo_erro": "E-102",
+        "causa_provavel": "válvula termostática travada",
+        "acao_recomendada": "substituir o componente e registrar a troca no histórico",
+        "pecas_recomendadas": [
+          {
+            "nome": "válvula termostática 3/4",
+            "quantidade": 1,
+            "prioridade": "alta"
+          },
+          {
+            "nome": "jogo de juntas",
+            "quantidade": 2,
+            "prioridade": "media"
+          }
+        ]
+      },
+      {
+        "codigo_erro": "E-103",
+        "causa_provavel": "falta de lubrificação no mancal",
+        "acao_recomendada": "substituir o componente e registrar a troca no histórico",
+        "pecas_recomendadas": [
+          {
+            "nome": "graxa de lítio EP-2 (tubo 400g)",
+            "quantidade": 3,
+            "prioridade": "alta"
+          },
+          {
+            "nome": "retentor do mancal",
+            "quantidade": 2,
+            "prioridade": "media"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "TRN-300",
+    "nome": "Torno CNC Andrade T-300",
+    "erros_conhecidos": [
+      {
+        "codigo_erro": "E-201",
+        "causa_provavel": "filtro de ar saturado",
+        "acao_recomendada": "parar o equipamento e abrir chamado para a manutenção elétrica",
+        "pecas_recomendadas": [
+          {
+            "nome": "elemento filtrante de ar",
+            "quantidade": 2,
+            "prioridade": "alta"
+          },
+          {
+            "nome": "junta de vedação do filtro",
+            "quantidade": 2,
+            "prioridade": "media"
+          }
+        ]
+      },
+      {
+        "codigo_erro": "E-202",
+        "causa_provavel": "excesso de carga na partida",
+        "acao_recomendada": "aguardar o resfriamento e conferir o aperto das conexões",
+        "pecas_recomendadas": [
+          {
+            "nome": "relé térmico regulável",
+            "quantidade": 1,
+            "prioridade": "alta"
+          },
+          {
+            "nome": "mola de acoplamento",
+            "quantidade": 2,
+            "prioridade": "media"
+          }
+        ]
+      },
+      {
+        "codigo_erro": "E-203",
+        "causa_provavel": "sensor de temperatura descalibrado",
+        "acao_recomendada": "parar o equipamento e abrir chamado para a manutenção elétrica",
+        "pecas_recomendadas": [
+          {
+            "nome": "sensor de temperatura PT-100",
+            "quantidade": 1,
+            "prioridade": "alta"
+          },
+          {
+            "nome": "cabo de sinal blindado 2x0,5mm",
+            "quantidade": 1,
+            "prioridade": "baixa"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "EST-450",
+    "nome": "Esteira Transportadora Andrade E-450",
+    "erros_conhecidos": [
+      {
+        "codigo_erro": "E-301",
+        "causa_provavel": "filtro de ar saturado",
+        "acao_recomendada": "substituir o componente e registrar a troca no histórico",
+        "pecas_recomendadas": [
+          {
+            "nome": "elemento filtrante de ar",
+            "quantidade": 2,
+            "prioridade": "alta"
+          },
+          {
+            "nome": "junta de vedação do filtro",
+            "quantidade": 2,
+            "prioridade": "media"
+          }
+        ]
+      },
+      {
+        "codigo_erro": "E-302",
+        "causa_provavel": "falta de lubrificação no mancal",
+        "acao_recomendada": "parar o equipamento e abrir chamado para a manutenção elétrica",
+        "pecas_recomendadas": [
+          {
+            "nome": "graxa de lítio EP-2 (tubo 400g)",
+            "quantidade": 3,
+            "prioridade": "alta"
+          },
+          {
+            "nome": "retentor do mancal",
+            "quantidade": 2,
+            "prioridade": "media"
+          }
+        ]
+      },
+      {
+        "codigo_erro": "E-303",
+        "causa_provavel": "vazamento na linha de pressão",
+        "acao_recomendada": "substituir o componente e registrar a troca no histórico",
+        "pecas_recomendadas": [
+          {
+            "nome": "mangueira de pressão 1/2",
+            "quantidade": 1,
+            "prioridade": "alta"
+          },
+          {
+            "nome": "abraçadeira inox 20mm",
+            "quantidade": 4,
+            "prioridade": "baixa"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "FRN-720",
+    "nome": "Forno de Tratamento Térmico Andrade F-720",
+    "erros_conhecidos": [
+      {
+        "codigo_erro": "E-401",
+        "causa_provavel": "vazamento na linha de pressão",
+        "acao_recomendada": "aguardar o resfriamento e conferir o aperto das conexões",
+        "pecas_recomendadas": [
+          {
+            "nome": "mangueira de pressão 1/2",
+            "quantidade": 1,
+            "prioridade": "alta"
+          },
+          {
+            "nome": "abraçadeira inox 20mm",
+            "quantidade": 4,
+            "prioridade": "baixa"
+          }
+        ]
+      },
+      {
+        "codigo_erro": "E-402",
+        "causa_provavel": "falta de lubrificação no mancal",
+        "acao_recomendada": "aguardar o resfriamento e conferir o aperto das conexões",
+        "pecas_recomendadas": [
+          {
+            "nome": "graxa de lítio EP-2 (tubo 400g)",
+            "quantidade": 3,
+            "prioridade": "alta"
+          },
+          {
+            "nome": "retentor do mancal",
+            "quantidade": 2,
+            "prioridade": "media"
+          }
+        ]
+      },
+      {
+        "codigo_erro": "E-403",
+        "causa_provavel": "excesso de carga na partida",
+        "acao_recomendada": "limpar o conjunto e medir novamente antes de religar",
+        "pecas_recomendadas": [
+          {
+            "nome": "relé térmico regulável",
+            "quantidade": 1,
+            "prioridade": "alta"
+          },
+          {
+            "nome": "mola de acoplamento",
+            "quantidade": 2,
+            "prioridade": "media"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "BMB-210",
+    "nome": "Bomba Centrífuga Andrade B-210",
+    "erros_conhecidos": [
+      {
+        "codigo_erro": "E-501",
+        "causa_provavel": "sensor de temperatura descalibrado",
+        "acao_recomendada": "substituir o componente e registrar a troca no histórico",
+        "pecas_recomendadas": [
+          {
+            "nome": "sensor de temperatura PT-100",
+            "quantidade": 1,
+            "prioridade": "alta"
+          },
+          {
+            "nome": "cabo de sinal blindado 2x0,5mm",
+            "quantidade": 1,
+            "prioridade": "baixa"
+          }
+        ]
+      },
+      {
+        "codigo_erro": "E-502",
+        "causa_provavel": "rolamento com folga acima do limite",
+        "acao_recomendada": "limpar o conjunto e medir novamente antes de religar",
+        "pecas_recomendadas": [
+          {
+            "nome": "rolamento 6205-2RS",
+            "quantidade": 2,
+            "prioridade": "alta"
+          },
+          {
+            "nome": "anel elástico de retenção",
+            "quantidade": 2,
+            "prioridade": "baixa"
+          }
+        ]
+      },
+      {
+        "codigo_erro": "E-503",
+        "causa_provavel": "válvula termostática travada",
+        "acao_recomendada": "substituir o componente e registrar a troca no histórico",
+        "pecas_recomendadas": [
+          {
+            "nome": "válvula termostática 3/4",
+            "quantidade": 1,
+            "prioridade": "alta"
+          },
+          {
+            "nome": "jogo de juntas",
+            "quantidade": 2,
+            "prioridade": "media"
+          }
+        ]
+      }
+    ]
+  }
+]

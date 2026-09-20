@@ -20,3 +20,4 @@ Todas as respostas geradas com apoio de IA foram revisadas e validadas por mim.
 | 5 | Gerador do manual em JSON, ferramenta consultar_manual_equipamento e texto discursivo | Claude Code | Claude Opus 5 |
 | 6 | Segunda ferramenta, controle de tool_choice/stop_on_first_tool, histórico e texto discursivo | Claude Code | Claude Opus 5 |
 | 7 | Tratamento de erro da ferramenta, saída estruturada com Pydantic, sessão SQLite e texto discursivo | Claude Code | Claude Opus 5 |
+| 8 | Manual com peças, modelos Pydantic aninhados, ferramenta assíncrona com tratamento de erro próprio e texto discursivo | Claude Code | Claude Opus 5 |
