@@ -12,3 +12,4 @@ wheels/
 # Chave de API (nunca versionar)
 .env
 exercicio_07/sessao.db
+exercicio_09/sessao_tecnico.db
