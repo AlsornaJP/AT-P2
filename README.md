@@ -1,5 +1,12 @@
 # AT-P2
 
+## Vídeo de apresentação
+
+https://youtu.be/wVWASWHSNAA
+
+O vídeo explica as decisões de três exercícios: a estrutura de dados aninhada do exercício 8, a
+estratégia de memória do exercício 11 e o tratamento de `task_id` inexistente do exercício 14.
+
 ## Como executar
 
 1. Instale as dependências: `uv sync`
