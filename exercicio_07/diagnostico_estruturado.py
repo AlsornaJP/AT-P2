@@ -6,6 +6,7 @@ from typing import Any
 
 from agents import (
     Agent,
+    ModelSettings,
     OpenAIChatCompletionsModel,
     RunContextWrapper,
     Runner,
@@ -67,7 +68,7 @@ def consultar_manual_equipamento(codigo_equipamento: str) -> str:
     raise EquipamentoNaoEncontrado(f"o código {codigo_equipamento} não existe no manual.")
 
 
-def criar_agente(com_ferramenta: bool = True) -> Agent:
+def criar_agente() -> Agent:
     cliente = AsyncOpenAI(
         api_key=os.getenv("GEMINI_API_KEY"),
         base_url=os.getenv("GEMINI_BASE_URL"),
@@ -87,7 +88,7 @@ def criar_agente(com_ferramenta: bool = True) -> Agent:
             openai_client=cliente,
         ),
         output_type=DiagnosticoEquipamento,
-        tools=[consultar_manual_equipamento] if com_ferramenta else [],
+        tools=[consultar_manual_equipamento],
     )
 
 
@@ -132,14 +133,23 @@ async def parte_3_sessao() -> None:
 
     sessao = SQLiteSession("chamado-001", str(CAMINHO_DA_SESSAO))
 
+    agente = criar_agente()
+
     primeira = "O torno TRN-300 apresentou o erro E-201. Qual é a causa?"
-    print(f"Pergunta 1 (agente com a ferramenta): {primeira}")
-    resultado = await Runner.run(criar_agente(), primeira, session=sessao)
+    print(f"Pergunta 1 (o agente pode usar a ferramenta): {primeira}")
+    resultado = await Runner.run(agente, primeira, session=sessao)
     mostrar(resultado.final_output)
 
+    # A resposta já está no histórico, então a ferramenta não é mais necessária.
+    # Pedir isso na instrução não basta: o modelo às vezes chama a ferramenta de
+    # novo sem parar, e a execução estoura o limite de turnos. Com tool_choice
+    # igual a "none" o mesmo agente fica proibido de chamar a ferramenta e
+    # precisa responder com o que já está na memória.
+    agente_so_com_memoria = agente.clone(model_settings=ModelSettings(tool_choice="none"))
+
     segunda = "E qual a ação recomendada mesmo?"
-    print(f"Pergunta 2 (agente SEM a ferramenta): {segunda}")
-    resultado = await Runner.run(criar_agente(com_ferramenta=False), segunda, session=sessao)
+    print(f"Pergunta 2 (mesmo agente, com tool_choice=none): {segunda}")
+    resultado = await Runner.run(agente_so_com_memoria, segunda, session=sessao)
     mostrar(resultado.final_output)
 
     itens = await sessao.get_items()

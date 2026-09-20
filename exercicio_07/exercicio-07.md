@@ -12,7 +12,7 @@ Só que uma exceção dentro de uma ferramenta derruba a execução inteira do a
 
 A função `avisar_erro_ao_modelo` recebe o contexto da execução e a exceção. Ela não relança o erro: devolve um texto ao modelo, explicando que a consulta falhou e pedindo que o técnico confira o código no painel da máquina. Para o modelo, isso chega como se fosse a resposta da ferramenta, e ele continua trabalhando normalmente.
 
-**Resultado da execução.** A pergunta foi sobre o equipamento inexistente XYZ-999. A saída mostra, em ordem: a ferramenta sendo chamada, a linha `[failure_error_function] a tool falhou: o código XYZ-999 não existe no manual.`, a confirmação `A execução não quebrou.` e, em seguida, a resposta do agente já estruturada, dizendo que o código não foi localizado e que o técnico deve conferir a placa de identificação.
+**Resultado da execução.** A pergunta foi sobre o equipamento inexistente XYZ-999. A saída mostra, em ordem: a ferramenta sendo chamada, a linha `[failure_error_function] a tool falhou: o código XYZ-999 não existe no manual.`, a confirmação `A execução não quebrou.` e, em seguida, a resposta do agente já estruturada, dizendo que o código não foi localizado no manual e que o técnico deve conferir o código diretamente no painel da máquina.
 
 Ou seja: o erro aconteceu, foi tratado, e o painel de despacho ainda recebeu uma resposta com os três campos preenchidos, em vez de uma queda do serviço.
 
@@ -32,23 +32,29 @@ A `SQLiteSession` guarda as mensagens da conversa em um arquivo SQLite, o `sessa
 
 **Primeira pergunta:** "O torno TRN-300 apresentou o erro E-201. Qual é a causa?" O agente consultou o manual e respondeu "filtro de ar saturado".
 
-**Segunda pergunta:** "E qual a ação recomendada mesmo?" Essa pergunta não diz qual é o equipamento nem qual é o erro. Mesmo assim, o agente respondeu com o código TRN-300 e a ação "parar o equipamento e abrir chamado para a manutenção elétrica", que é o que o manual traz para o E-201.
+**Segunda pergunta:** "E qual a ação recomendada mesmo?" Essa pergunta não diz qual é o equipamento nem qual é o erro. Mesmo assim, o agente respondeu com o código TRN-300 e a ação "parar o equipamento e abrir chamado para a manutenção elétrica", que é o que o manual traz para o E-201. Repare que na saída não aparece nenhuma linha de chamada da ferramenta nessa segunda pergunta: a resposta veio só do histórico.
 
 No fim, o programa mostra que ficaram 6 mensagens guardadas no `sessao.db`. O arquivo está no `.gitignore`, porque é um dado de execução, não código.
 
 ### Um detalhe do código que vale explicar
 
-Na segunda pergunta, o agente é criado **sem a ferramenta** (`criar_agente(com_ferramenta=False)`). Isso tem dois motivos.
+Na segunda pergunta, o agente é o mesmo, mas roda com a escolha de ferramenta travada em "none", o que é feito com `agente.clone(model_settings=ModelSettings(tool_choice="none"))`. Vale explicar por quê.
 
-O primeiro é que essa é uma prova mais forte de que a memória funciona: se o agente não tem como consultar o manual, a única fonte possível para a resposta é o histórico guardado na sessão.
+O motivo principal é um problema real que apareceu nos testes. Com `output_type` e ferramenta ao mesmo tempo, e já com o histórico da sessão carregado, o Gemini muitas vezes chamava a ferramenta de novo, recebia o mesmo dado, chamava outra vez, e a execução acabava parando no limite de rodadas do SDK, com o erro `MaxTurnsExceeded`. Isso acontece porque, com saída estruturada, o SDK só encerra quando o modelo devolve a resposta final em vez de uma nova chamada de ferramenta — enquanto ele insistir na ferramenta, a execução não termina.
 
-O segundo motivo é prático. Quando o agente tinha `output_type` e ferramenta ao mesmo tempo, com o histórico da sessão, o Gemini entrava em um laço: chamava a ferramenta de novo, recebia o dado, chamava outra vez, e a execução acabava parando no limite de 10 rodadas do SDK (`MaxTurnsExceeded`). Testei o mesmo código sem `output_type` e a sessão funcionou normalmente, o que mostra que o problema é a combinação dos dois com esse provedor. Também testei o mesmo caso no OpenRouter, com o DeepSeek, e ele falhou de outro jeito: devolveu um JSON inválido para o formato pedido.
+A instrução em texto pedindo "se a informação já apareceu antes, responda direto, sem chamar a ferramenta de novo" não resolveu. Ela continua no agente, mas é só um pedido: o modelo obedece às vezes. Medindo, o agente sem restrição entrou em laço em 3 de 4 execuções; com `tool_choice="none"`, foram 6 execuções seguidas respondendo direto, nenhuma delas chamando a ferramenta. A lição é que instrução em texto influencia o modelo, mas só o parâmetro garante o comportamento — o mesmo ponto que apareceu no Exercício 6.
 
-Tirar a ferramenta da segunda pergunta resolve o problema e não muda o objetivo da tarefa, que é mostrar a sessão funcionando.
+Vale registrar o que eu **não** encontrei. Cheguei a suspeitar que a culpa fosse de algo guardado no histórico da sessão, em especial as assinaturas de raciocínio que o Gemini grava junto com a chamada de ferramenta, ou o tamanho da resposta da ferramenta. Testei as duas coisas isoladamente e nenhuma explica o laço: o mesmo histórico falhou numa execução e passou em outra. O comportamento é variável, e é justamente por isso que depender da instrução em texto não serve.
+
+O segundo motivo é didático: proibida de usar a ferramenta, a única fonte possível para a resposta é o histórico guardado na sessão, o que torna a demonstração da memória mais convincente.
+
+Uma vantagem dessa solução em relação à anterior, que criava um segundo agente sem ferramenta, é que agora existe um agente só no exercício, como o enunciado descreve. O que muda entre as duas perguntas é apenas um parâmetro de execução.
+
+Também testei o mesmo caso no OpenRouter, com o DeepSeek, e ele falhou de outro jeito: devolveu um JSON inválido para o formato pedido.
 
 ## 4. Evidências
 
-*(inserir os prints depois de tirá-los)*
-
-- Print 1 – Partes 1 e 2: o erro tratado pelo `failure_error_function` sem quebrar a execução, e a saída estruturada do CMP-100: `prints/...`
-- Print 2 – Parte 3: as duas perguntas da sessão, com a segunda respondida sem citar o equipamento, e o total de mensagens guardadas: `prints/...`
+- Print único – `prints/Screenshot_20260920_090841.png`: a execução completa das três partes, de uma vez só.
+  - **Parte 1:** a chamada da ferramenta para o XYZ-999, a linha do `failure_error_function` avisando que o código não existe, a confirmação `A execução não quebrou.` e a resposta estruturada logo em seguida.
+  - **Parte 2:** o CMP-100 com os três campos preenchidos a partir do manual.
+  - **Parte 3:** a Pergunta 1 com a consulta ao manual e a Pergunta 2 **sem nenhuma linha de chamada da ferramenta**, respondendo TRN-300 com a ação correta, e o total de 6 mensagens guardadas no `sessao.db`.
