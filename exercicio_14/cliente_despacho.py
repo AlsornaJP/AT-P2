@@ -93,7 +93,7 @@ def main() -> None:
             print(f"      {chave}: {valor}")
         print()
 
-        print(f"Pedindo o diagnóstico do mesmo task_id inventado:")
+        print("Pedindo o diagnóstico do mesmo task_id inventado:")
         r = cliente.get(f"{ENDERECO}/agent/response/{TASK_ID_INVENTADO}")
         print(f"   -> HTTP {r.status_code} ({r.json()['detail']['erro']})")
         print()

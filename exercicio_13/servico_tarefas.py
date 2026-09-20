@@ -21,9 +21,9 @@ from openai import AsyncOpenAI
 from pydantic import BaseModel, Field
 
 # Mesmo caminho do Exercício 12: o agente é o do Exercício 11, importado.
-sys.path.insert(0, str(Path(__file__).parent.parent / "exercicio_11"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import agente_integrador as agente_do_exercicio_11  # noqa: E402
+from exercicio_11 import agente_integrador as agente_do_exercicio_11  # noqa: E402
 from agents import OpenAIChatCompletionsModel, Runner  # noqa: E402
 
 # O registro das tarefas: task_id -> o que se sabe sobre ela.

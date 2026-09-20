@@ -18,18 +18,21 @@ from datetime import datetime
 from pathlib import Path
 
 import uvicorn
+from dotenv import load_dotenv
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
+# A raiz do projeto entra no caminho de busca do Python, porque ao rodar um
+# script ele coloca ali a pasta do próprio script, e não a do projeto. Com a raiz
+# no caminho, cada pasta de exercício pode ser importada como pacote.
 RAIZ = Path(__file__).parent.parent
-sys.path.insert(0, str(RAIZ / "exercicio_08"))
-sys.path.insert(0, str(RAIZ / "exercicio_11"))
+sys.path.insert(0, str(RAIZ))
 
 # Do Exercício 8 vêm os modelos aninhados e a ferramenta do manual com peças.
-import diagnostico_completo as exercicio_08  # noqa: E402
+from exercicio_08 import diagnostico_completo as exercicio_08  # noqa: E402
 
 # Do Exercício 11 vem a busca semântica sobre o manual longo.
-import agente_integrador as exercicio_11  # noqa: E402
+from exercicio_11 import agente_integrador as exercicio_11  # noqa: E402
 from agents import (  # noqa: E402
     Agent,
     MaxTurnsExceeded,
@@ -38,6 +41,8 @@ from agents import (  # noqa: E402
 )
 from openai import AsyncOpenAI  # noqa: E402
 import os  # noqa: E402
+
+load_dotenv()
 
 TAREFAS: dict[str, dict] = {}
 MAXIMO_DE_RODADAS = 8
@@ -148,7 +153,7 @@ async def processar(task_id: str, pedido: PerguntaDoTecnico) -> None:
         # de ficar presa para sempre.
         TAREFAS[task_id]["estado"] = "error"
         TAREFAS[task_id]["erro"] = (
-            f"O agente ficou chamando as ferramentas sem concluir e passou de "
+            "O agente ficou chamando as ferramentas sem concluir e passou de "
             f"{MAXIMO_DE_RODADAS} rodadas."
         )
         TAREFAS[task_id]["segundos"] = round(time.perf_counter() - relogio, 1)

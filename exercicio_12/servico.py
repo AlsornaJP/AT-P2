@@ -17,11 +17,13 @@ from fastapi import BackgroundTasks, FastAPI
 from pydantic import BaseModel, Field
 
 # O enunciado pede o agente do Exercício 11. Em vez de copiar o código para cá,
-# acrescento a pasta dele ao caminho de busca do Python e importo o módulo de
-# verdade. Assim é literalmente o mesmo agente, e não uma cópia que envelhece.
-sys.path.insert(0, str(Path(__file__).parent.parent / "exercicio_11"))
+# acrescento a RAIZ do projeto ao caminho de busca e importo a pasta dele como
+# pacote. Assim é literalmente o mesmo agente, e não uma cópia que envelhece.
+# A raiz é necessária porque o Python coloca a pasta do script no caminho, e não
+# a do projeto.
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import agente_integrador as agente_do_exercicio_11  # noqa: E402
+from exercicio_11 import agente_integrador as agente_do_exercicio_11  # noqa: E402
 from agents import Runner  # noqa: E402
 
 # Os resultados prontos ficam aqui. É um dicionário na memória do processo:
