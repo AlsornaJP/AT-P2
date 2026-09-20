@@ -24,3 +24,4 @@ Todas as respostas geradas com apoio de IA foram revisadas e validadas por mim.
 | 9 | Histórico com lista de TResponseInputItem, sessão SQLite persistente entre execuções e texto discursivo | Claude Code | Claude Opus 5 |
 | 10 | Manual longo, segmentação com sobreposição, embeddings e busca semântica integrados ao SDK, e texto discursivo | Claude Code | Claude Opus 5 |
 | 11 | Agente com sessão e RAG juntos, experimento desligando cada metade, diagnóstico da busca e avaliação de estratégia | Claude Code | Claude Opus 5 |
+| 12 | Serviço FastAPI com modelos Pydantic de entrada e saída, BackgroundTasks e cliente de teste, e texto discursivo | Claude Code | Claude Opus 5 |

@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "fastapi>=0.141.1",
     "openai-agents>=0.22.2",
     "python-dotenv>=1.2.3",
 ]
