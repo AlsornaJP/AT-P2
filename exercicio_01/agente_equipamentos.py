@@ -19,7 +19,7 @@ def formatar_resposta(pergunta: str, resposta: str) -> None:
     """Monta um texto organizado com a pergunta e a resposta do agente."""
     print(f"Pergunta: {pergunta}")
     print(f"Resposta: {resposta}")
-    
+
 
 
 async def perguntar_ao_agente(pergunta: str) -> str:
