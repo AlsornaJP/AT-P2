@@ -13,6 +13,7 @@ from pathlib import Path
 
 from agents import (
     Agent,
+    ModelBehaviorError,
     OpenAIChatCompletionsModel,
     Runner,
     SQLiteSession,
@@ -31,7 +32,12 @@ PASTA_DAS_SESSOES = Path(__file__).parent / "sessoes"
 MODELO_DE_EMBEDDING = "gemini-embedding-001"
 DIMENSOES = 768
 LIMITE_DO_TRECHO = 600
-QUANTOS_TRECHOS_BUSCAR = 3
+
+# Quantos trechos a busca devolve. O valor natural seria 3, mas a medição da
+# seção do diagnóstico mostrou que, quando o agente reescreve a pergunta puxando
+# o assunto da conversa, o trecho certo pode cair para 4º lugar. Com 5 ele entra.
+QUANTOS_TRECHOS_BUSCAR = 5
+JANELA_ESTREITA = 3
 SEGUNDOS_DE_PAUSA = 10
 
 TRECHOS: list[dict] = []
@@ -134,7 +140,9 @@ INSTRUCAO_BASE = (
 )
 
 # A instrução base deixa o agente decidir quando buscar, e ele às vezes decide que
-# não precisa. Esta versão tira essa decisão dele para perguntas de procedimento.
+# não precisa, mesmo tendo a ferramenta à mão. Esta é a instrução que o agente do
+# exercício usa: ela tira essa decisão dele para perguntas de procedimento. A base
+# fica no arquivo para servir de comparação no experimento.
 INSTRUCAO_REFORCADA = INSTRUCAO_BASE + (
     " Sempre que a pergunta envolver um procedimento, um valor ou um passo de manutenção, "
     "consulte o manual com a ferramenta antes de responder, mesmo que você ache que já sabe a "
@@ -144,10 +152,29 @@ INSTRUCAO_REFORCADA = INSTRUCAO_BASE + (
 )
 
 
-def criar_agente(com_rag: bool, reforcada: bool = False) -> Agent:
+# Nas configurações sem RAG o agente não tem ferramenta nenhuma. Mandar consultar
+# uma ferramenta inexistente faz o modelo inventar uma chamada e a execução quebra
+# com ModelBehaviorError. Então essa configuração recebe uma instrução sem busca.
+INSTRUCAO_SEM_BUSCA = (
+    "Você é o assistente dos técnicos de campo da Metalúrgica Andrade, especialista no "
+    "manual do compressor CMP-100. "
+    "Responda em no máximo três frases curtas. "
+    "Use a conversa anterior para entender perguntas curtas do técnico. "
+    "Responda apenas com o que estiver na conversa. "
+    "Se não tiver a informação, diga claramente que não sabe e não invente nada."
+)
+
+
+def escolher_instrucao(com_rag: bool, reforcada: bool) -> str:
+    if not com_rag:
+        return INSTRUCAO_SEM_BUSCA
+    return INSTRUCAO_REFORCADA if reforcada else INSTRUCAO_BASE
+
+
+def criar_agente(com_rag: bool, reforcada: bool = True) -> Agent:
     return Agent(
         name="Assistente de Campo",
-        instructions=INSTRUCAO_REFORCADA if reforcada else INSTRUCAO_BASE,
+        instructions=escolher_instrucao(com_rag, reforcada),
         model=OpenAIChatCompletionsModel(
             model=os.getenv("GEMINI_MODEL"), openai_client=cliente_openai()
         ),
@@ -181,9 +208,11 @@ async def executar_com_retentativa(agente: Agent, pergunta: str, sessao):
             return await Runner.run(agente, pergunta, session=sessao)
         except Exception as erro:
             codigo = getattr(erro, "status_code", None)
-            if codigo not in (429, 503) or tentativa == 4:
+            recuperavel = codigo in (429, 503) or isinstance(erro, ModelBehaviorError)
+            if not recuperavel or tentativa == 4:
                 raise
-            print(f"      (provedor respondeu {codigo}; nova tentativa em {espera}s)")
+            motivo = f"provedor respondeu {codigo}" if codigo else f"{type(erro).__name__}"
+            print(f"      ({motivo}; nova tentativa em {espera}s)")
             await asyncio.sleep(espera)
             espera *= 2
 
@@ -193,7 +222,7 @@ async def rodar_cenario(
     perguntas: list[dict],
     com_rag: bool,
     com_memoria: bool,
-    reforcada: bool = False,
+    reforcada: bool = True,
     quantos_trechos: int = QUANTOS_TRECHOS_BUSCAR,
 ) -> list[dict]:
     global JANELA_DA_BUSCA
@@ -201,10 +230,10 @@ async def rodar_cenario(
     partes = []
     partes.append("RAG ligado" if com_rag else "RAG DESLIGADO")
     partes.append("memória ligada" if com_memoria else "memória DESLIGADA")
-    if reforcada:
-        partes.append("instrução reforçada")
+    if not reforcada:
+        partes.append("instrução base, sem reforço")
     if quantos_trechos != QUANTOS_TRECHOS_BUSCAR:
-        partes.append(f"janela de {quantos_trechos} trechos")
+        partes.append(f"janela estreita, de {quantos_trechos} trechos")
     print("-" * 70)
     print(f"{rotulo}  ({', '.join(partes)})")
     print("-" * 70)
@@ -308,20 +337,23 @@ async def main() -> None:
     placar = []
 
     titulo("Cenário A - três perguntas de acompanhamento sobre o mesmo chamado")
-    print("A terceira pergunta só pode ser respondida pela conversa anterior.")
+    print("A primeira pergunta precisa do manual; a segunda e a terceira, da conversa.")
+    print("Por isso este cenário roda nas três configurações.")
     print()
     a_sem_memoria = await rodar_cenario("Cenário A sem memória", CENARIO_A, True, False)
-    a_completo = await rodar_cenario("Cenário A completo", CENARIO_A, True, True)
+    a_sem_rag = await rodar_cenario("Cenário A sem RAG", CENARIO_A, False, True)
+    a_completo = await rodar_cenario("Cenário A - agente do exercício", CENARIO_A, True, True)
     placar.append(("A sem memória (só RAG)", a_sem_memoria))
-    placar.append(("A completo", a_completo))
+    placar.append(("A sem RAG (só memória)", a_sem_rag))
+    placar.append(("A agente do exercício", a_completo))
 
     titulo("Cenário B - uma consulta pontual, sem conversa anterior")
     print("A resposta está num parágrafo do fim do manual e nunca foi conversada.")
     print()
     b_sem_rag = await rodar_cenario("Cenário B sem RAG", CENARIO_B, False, True)
-    b_completo = await rodar_cenario("Cenário B completo", CENARIO_B, True, True)
+    b_completo = await rodar_cenario("Cenário B - agente do exercício", CENARIO_B, True, True)
     placar.append(("B sem RAG (só memória)", b_sem_rag))
-    placar.append(("B completo", b_completo))
+    placar.append(("B agente do exercício", b_completo))
 
     titulo("Diagnóstico - o trecho da segunda pergunta do Cenário C é achável?")
     print("A resposta está no trecho que fala em rodar trinta minutos em vazio.")
@@ -343,11 +375,12 @@ async def main() -> None:
         )
         print(f"   Consulta com {rotulo_consulta}:")
         print(f"     '{consulta}'")
-        for posicao, (nota, trecho) in enumerate(notas[:5], start=1):
-            dentro = "dentro" if posicao <= QUANTOS_TRECHOS_BUSCAR else "FORA"
+        for posicao, (nota, trecho) in enumerate(notas[:6], start=1):
+            se_3 = "entra" if posicao <= JANELA_ESTREITA else "FICA DE FORA"
+            se_5 = "entra" if posicao <= QUANTOS_TRECHOS_BUSCAR else "fica de fora"
             marca = "  <== o trecho que responde" if "trinta minutos" in trecho["texto"] else ""
             print(f"       {posicao}º trecho {trecho['numero']:>2}: {nota:.4f}  "
-                  f"({dentro} da janela de {QUANTOS_TRECHOS_BUSCAR}){marca}")
+                  f"(com janela 3 {se_3}; com janela 5 {se_5}){marca}")
         print()
 
     titulo("Cenário C - acompanhamento curto que exige um procedimento novo")
@@ -356,24 +389,26 @@ async def main() -> None:
     print()
     c_sem_memoria = await rodar_cenario("Cenário C sem memória", CENARIO_C, True, False)
     c_sem_rag = await rodar_cenario("Cenário C sem RAG", CENARIO_C, False, True)
-    c_completo = await rodar_cenario("Cenário C completo", CENARIO_C, True, True)
-    print("Se o completo falhar acima, o motivo provável é o agente não ter decidido buscar.")
-    print("A configuração abaixo tira essa decisão dele, pela instrução.")
+    print("Agora as duas formas de combinar memória e busca: a ingênua e a do exercício.")
     print()
-    c_reforcado = await rodar_cenario(
-        "Cenário C completo reforçado", CENARIO_C, True, True, reforcada=True
+    c_ingenuo = await rodar_cenario(
+        "Cenário C combinação ingênua",
+        CENARIO_C,
+        True,
+        True,
+        reforcada=False,
+        quantos_trechos=JANELA_ESTREITA,
     )
+    print("A combinação ingênua costuma falhar aqui, por dois motivos: o agente decide")
+    print("que não precisa buscar, e quando busca o trecho certo fica fora da janela de 3.")
+    print("Abaixo, o agente do exercício, com a instrução reforçada e a janela de 5.")
+    print()
+    c_completo = await rodar_cenario("Cenário C - agente do exercício", CENARIO_C, True, True)
+
     placar.append(("C sem memória (só RAG)", c_sem_memoria))
     placar.append(("C sem RAG (só memória)", c_sem_rag))
-    placar.append(("C completo", c_completo))
-    print("A busca foi chamada, mas o trecho certo ficou fora da janela de 3.")
-    print("A configuração abaixo muda só isso: amplia a janela para 5 trechos.")
-    print()
-    c_janela = await rodar_cenario(
-        "Cenário C reforçado, janela 5", CENARIO_C, True, True, reforcada=True, quantos_trechos=5
-    )
-    placar.append(("C completo + instrução reforçada", c_reforcado))
-    placar.append(("C reforçado + janela de 5 trechos", c_janela))
+    placar.append(("C combinação ingênua", c_ingenuo))
+    placar.append(("C agente do exercício", c_completo))
 
     titulo("Placar final")
     for nome, resultados in placar:
