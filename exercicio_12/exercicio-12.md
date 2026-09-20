@@ -17,7 +17,7 @@ Então o serviço acrescenta a pasta do Exercício 11 ao caminho de busca do Pyt
 
 O FastAPI tem um gancho que roda quando o serviço sobe e quando ele para. É ali que o manual é segmentado em trechos e transformado em vetores, uma única vez.
 
-O log mostra: `pronto em 1.09s: 14 trechos indexados`. Depois disso, cada pergunta que chega já encontra o índice montado. Se essa preparação ficasse dentro do endpoint, toda pergunta pagaria de novo por um trabalho que não muda.
+O log mostra: `pronto em 1.23s: 14 trechos indexados`. Depois disso, cada pergunta que chega já encontra o índice montado. Se essa preparação ficasse dentro do endpoint, toda pergunta pagaria de novo por um trabalho que não muda.
 
 ## 3. Os três modelos Pydantic
 
@@ -41,13 +41,17 @@ Escolhi responder com o código **202** em vez do 200 habitual. Em HTTP, 200 que
 
 ### A prova de que não bloqueia
 
-Está nos dois prints, e são três evidências que se apoiam.
+Está nos prints, e são três evidências que se apoiam.
 
-**Os tempos.** O cliente mediu: as duas chamadas POST levaram **0,001 e 0,003 segundos**. No log do serviço, as mesmas duas perguntas levaram **10,3 e 19,1 segundos** para o agente responder. O sistema de despacho foi liberado milhares de vezes mais rápido do que o trabalho de fato.
+**Os tempos.** O cliente mediu: o GET respondeu em 0,003 segundos e as duas chamadas POST em **0,002 e 0,004 segundos**. No log do serviço, as mesmas duas perguntas levaram **7,9 e 19,6 segundos** para o agente responder. O sistema de despacho foi liberado cerca de cinco mil vezes mais rápido do que o trabalho levou de fato.
 
-**A ordem no log.** O serviço registra `POST /chamados HTTP/1.1" 202 Accepted` e **só depois** registra `[fundo] começou a trabalhar`. Se o endpoint estivesse esperando o agente, a ordem seria a inversa. Essa ordem é a demonstração mais direta de que a resposta saiu antes de o trabalho começar.
+**A ordem no log.** O serviço registra `POST /chamados HTTP/1.1" 202 Accepted` e **só depois** registra `[fundo] começou a trabalhar`. Isso acontece nas duas perguntas. Se o endpoint estivesse esperando o agente, a ordem seria a inversa. É a demonstração mais direta de que a resposta saiu antes de o trabalho começar.
 
-**As duas ao mesmo tempo.** As duas tarefas de fundo começaram antes de qualquer uma terminar, e o serviço continuou atendendo enquanto trabalhava — tanto que ainda respondeu o terceiro pedido, o inválido, com 422, no meio disso.
+**A ordem em que terminaram.** Esta é a evidência mais bonita, e eu não a tinha planejado. O chamado `237cc967`, o primeiro a chegar, terminou em 19,6 segundos. O chamado `048cbd19`, que chegou **depois**, terminou em 7,9 segundos — ou seja, **antes**. As duas tarefas estavam rodando ao mesmo tempo, e quem acabou primeiro foi quem teve a resposta mais rápida do provedor, não quem chegou primeiro.
+
+Num serviço que bloqueasse, isso seria impossível: a segunda pergunta nem teria começado antes de a primeira terminar.
+
+E, no meio disso tudo, o serviço ainda respondeu o terceiro pedido, o inválido, com `422 Unprocessable Entity`. Ele continuou atendendo enquanto trabalhava.
 
 ## 5. O que o serviço faz com a resposta pronta
 
@@ -73,14 +77,8 @@ No seu terminal isso provavelmente não aconteceria, porque terminal tem comport
 
 ## 8. Evidências
 
-*(inserir os prints depois de tirá-los)*
+São três prints, de dois terminais. Os identificadores dos chamados, `237cc967` e `048cbd19`, aparecem nos dois lados e ligam uma imagem à outra.
 
-- Print – o terminal do serviço: `prints/...`
-  - O arranque indexando os 14 trechos antes de aceitar requisições.
-  - A ordem das linhas: o `202 Accepted` registrado **antes** do `[fundo] começou a trabalhar`.
-  - As duas tarefas terminando em 10,3 e 19,1 segundos, com as respostas do agente.
-  - O `422 Unprocessable Entity` do pedido inválido, no meio do trabalho.
-- Print – o terminal do cliente: `prints/...`
-  - O GET devolvendo o valor fixo.
-  - Os dois POST aceitos em 0,001 e 0,003 segundos, com status 202.
-  - O pedido inválido recebendo 422 e a mensagem da validação do Pydantic.
+- **`prints/Screenshot_20260920_124316.png`** – o serviço subindo. As linhas do arranque aparecem entre o `Waiting for application startup` e o `Application startup complete`: `pronto em 1.23s: 14 trechos indexados`. O índice fica pronto antes de o serviço aceitar a primeira requisição.
+- **`prints/Screenshot_20260920_124409.png`** – o log do serviço durante o atendimento. Mostra, em ordem: o `GET /teste` com 200; os dois POST com `202 Accepted` **antes** das linhas `[fundo] começou a trabalhar`; o `422 Unprocessable Entity` do pedido inválido no meio do trabalho; e as duas tarefas terminando fora de ordem, `048cbd19` em 7,9 segundos e `237cc967` em 19,6 segundos, com as respostas do agente.
+- **`prints/Screenshot_20260920_124502.png`** – o terminal do cliente. O GET devolvendo o valor fixo em 0,003 segundos; os dois POST aceitos em 0,002 e 0,004 segundos, com status 202 e os identificadores dos chamados; e o pedido sem o campo `pergunta` recebendo 422 com a mensagem `campo ['body', 'pergunta']: Field required`.
