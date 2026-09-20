@@ -91,26 +91,87 @@ Se estiver atrasado, corte o ponto 4 e vá direto para a cena.
 
 ## Exercício 14 — até 4:30 (cerca de 1 minuto e 15)
 
-**A ideia que precisa sair:** o 500 mente sobre quem errou.
+**Sobre o que é este bloco, em uma frase:** quando alguém pergunta ao serviço por algo que não
+existe, a resposta certa é dizer a verdade — e a verdade inclui admitir o que o serviço não sabe.
 
-Os pontos, nesta ordem:
+**Este bloco se apoia em duas telas.** Deixe os dois prints abertos e fale olhando para eles. A
+imagem faz metade do trabalho aqui.
 
-1. O agente virou serviço: submete, recebe identificador, consulta depois.
-2. A pergunta é o que fazer quando consultam um identificador que nunca existiu.
-3. Deixei o exercício 13 ingênuo de propósito, para comparar: ele devolve 500 com o rastro da
-   exceção. **Rodei os dois e tenho os prints.**
-4. **Motivo um:** o 500 quer dizer "o servidor falhou", mas o servidor recebeu um endereço errado.
-   Quem recebe isso abre chamado com a equipe errada.
-5. **Motivo dois:** "internal server error" são três palavras iguais para qualquer falha do mundo.
-6. **Motivo três:** o rastro vaza caminhos de arquivo.
-7. O 404 diz qual identificador foi pedido, por que isso acontece e o que fazer.
+### A cena, para abrir
 
-Se sobrar fôlego, o melhor extra é: a mensagem admite duas causas — nunca existiu, ou se perdeu num
-reinício — porque o serviço realmente não distingue as duas.
+Não comece pelos códigos HTTP. Comece pela situação:
 
-Se estiver atrasado, corte os motivos dois e três. O motivo um sozinho sustenta a decisão.
+> O sistema de despacho submete a pergunta e guarda o identificador para consultar depois. Só que o
+> serviço reinicia. Aí o despacho volta para consultar um identificador que, para o serviço, nunca
+> existiu.
 
----
+Isso não é caso raro nem descuido: é o que acontece **toda vez** que o serviço sobe de novo, porque
+o registro de tarefas fica na memória do processo. Esse é o gancho, e ele leva direto ao fim do
+bloco.
+
+### As duas telas
+
+**Mostre o print do exercício 13.** Diga que deixou esse comportamento ingênuo de propósito, para
+poder comparar, e que rodou os dois. O que aparece:
+
+- erro 500, e o corpo é só "internal server error"
+- a tela do serviço **cheia de rastro de exceção**, com caminhos de arquivo e linhas do FastAPI
+
+Deixe a imagem falar. Ela é constrangedora sozinha.
+
+**Mostre o print do exercício 14.** O mesmo pedido, agora:
+
+- erro 404
+- e um corpo com quatro campos: o que houve, qual identificador foi pedido, por que isso acontece,
+  e o que fazer em seguida
+- no log, **uma linha só**
+
+### Por que não deixar quebrar — o argumento que importa
+
+Este é o único motivo que você precisa dizer bem. Os outros dois são bônus.
+
+> O 500 quer dizer "o servidor falhou". Mas o servidor não falhou: ele recebeu um endereço que não
+> existe. **Quem errou foi quem perguntou, e o 500 está dizendo que foi quem respondeu.**
+
+E agora diga o custo, que é o que transforma isso em decisão de engenharia e não em preciosismo:
+
+> Um time de despacho que recebe 500 vai abrir chamado com a equipe do serviço, que vai investigar
+> um problema que não existe. Com 404, ele sabe na hora que precisa conferir o número do lado dele.
+
+### A alternativa que eu recusei
+
+Vale citar uma, para mostrar que houve escolha e não só um jeito certo:
+
+> Considerei devolver 200 com o estado "desconhecido", porque aí o cliente trataria tudo igual.
+> Recusei porque "pendente", "pronto" e "erro" são estados de uma tarefa **que existe**. Não existir
+> não é um estado da tarefa, é a ausência dela.
+
+### O fim do bloco, que é a melhor parte
+
+Volte ao gancho da abertura. A mensagem do 404 diz que o identificador **nunca foi emitido, ou se
+perdeu quando o serviço reiniciou**.
+
+> Seria mais bonito afirmar só a primeira. Mas seria mentira metade das vezes, porque o serviço
+> realmente não sabe qual das duas aconteceu. Uma mensagem de erro que afirma mais do que o serviço
+> sabe engana com educação.
+
+E emende: isso é limitação do registro ficar em memória. Num sistema de verdade seria banco e fila.
+**Eu sei onde está o limite do que construí** — e é assim que este bloco entrega você no fecho.
+
+### Se sobrar tempo
+
+Os outros dois motivos contra o 500: "internal server error" são três palavras iguais para qualquer
+falha do mundo, e o rastro de exceção vaza caminhos de arquivo e estrutura interna.
+
+### Se estiver atrasado
+
+Corte a alternativa recusada e os dois motivos extras. **Mantenha:** a cena do reinício, as duas
+telas, o motivo de o 500 mentir sobre quem errou, e a mensagem que admite as duas causas.
+
+### Se travar
+
+Aponte para a tela do 13 e descreva o que está vendo. "Isso aqui é o que o outro lado recebe quando
+pede um identificador que não existe." A imagem te devolve o fio.
 
 ## Fecho — até 4:40
 
@@ -139,4 +200,6 @@ Três frases. Se só isso sair, o vídeo cumpriu o que o professor pediu:
 
 1. Campos separados obrigam a chutar um máximo de peças; a lista faz a quantidade virar dado.
 2. A memória reescreveu a pergunta e empurrou o trecho certo de primeiro para quarto lugar.
-3. O 500 diz que o servidor falhou quando quem errou foi quem perguntou.
+3. O 500 diz que o servidor falhou quando quem errou foi quem perguntou — e o 404 ainda admite
+   que o identificador pode ter se perdido num reinício, porque o serviço não sabe qual dos dois
+   foi.
