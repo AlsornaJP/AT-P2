@@ -55,11 +55,3 @@ Todas as respostas geradas com apoio de IA foram revisadas e validadas por mim.
 | 12 | Serviço FastAPI com modelos Pydantic de entrada e saída, BackgroundTasks e cliente de teste, e texto discursivo | Claude Code | Claude Opus 5 |
 | 13 | Endpoints POST /agent/run e GET /agent/status/{task_id}, registro de tarefas com pending/done/error e texto discursivo | Claude Code | Claude Opus 5 |
 | 14 | Serviço REST completo com os três endpoints, agente integrador com as duas fontes, tratamento de task_id inexistente e texto discursivo | Claude Code | Claude Opus 5 |
-
-## Anotações de estudo
-
-A pasta `docs/` guarda anotações minhas, escritas para eu conseguir explicar as decisões na apresentação. Elas **não fazem parte da entrega** e nenhum código depende delas:
-
-- `investigacao-laco-exercicio-07.md` — por que o agente entrava em laço de ferramenta e como isso foi resolvido
-- `como-funciona-a-busca-por-vetores.md` — os embeddings e a similaridade de cosseno em linguagem comum
-- `busca-por-vetores-resumo.md` — a versão curta da anterior

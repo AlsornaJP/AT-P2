@@ -14,3 +14,6 @@ wheels/
 exercicio_07/sessao.db
 exercicio_09/sessao_tecnico.db
 exercicio_11/sessoes/
+
+# Pacote de entrega, gerado por git archive
+*.zip
