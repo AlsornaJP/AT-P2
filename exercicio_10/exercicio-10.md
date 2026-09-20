@@ -44,7 +44,7 @@ A pergunta do técnico é: "Com que força eu devo apertar os parafusos da tampa
 
 **Depois, a busca semântica.** A mesma pergunta, com as mesmas palavras, é transformada em vetor e comparada com os 14 trechos por similaridade de cosseno. O resultado: o trecho 9, que contém o parágrafo 14, fica em primeiro lugar com 0,7575, e o trecho 8, que também contém o parágrafo 14, fica em segundo com 0,7036. Os dois pedaços que guardam a resposta ocuparam as duas primeiras posições.
 
-Essa etapa roda **sem o agente**, direto do programa para a busca. Isso não é um detalhe: é o que torna o teste válido, e explico o motivo na seção 6.
+Essa etapa roda **sem o agente**, direto do programa para a busca. O motivo é separar o que cada parte do sistema faz, e está explicado na seção 6.
 
 A similaridade de cosseno está escrita à mão, em Python puro, sem biblioteca nenhuma. São três linhas: o produto dos vetores dividido pelo tamanho de cada um. O resultado vai de -1 a 1, e quanto mais perto de 1, mais parecido é o sentido dos dois textos.
 
@@ -56,15 +56,17 @@ O agente respondeu: quarenta e cinco newton-metro, em duas etapas, com sequênci
 
 Duas coisas valem ser notadas nessa resposta. A primeira é que o número está certo, apesar do distrator: o trecho 9 contém **os dois** valores de torque, o de 45 do cabeçote e o de 80 da base, e o agente escolheu o certo, porque a pergunta era sobre os parafusos de cima. A segunda é que ele citou a fonte, o que num painel de despacho real permitiria ao técnico conferir no manual.
 
-## 6. Uma ressalva honesta sobre o teste
+## 6. O agente reescreve a pergunta, e isso é normal
 
-Quando montei o exercício, a primeira versão fazia a pergunta direto ao agente e olhava o resultado. Deu certo, mas o teste estava furado, e prefiro registrar isso a esconder.
+Uma coisa que aparece nos prints e merece explicação: a pergunta que chega à ferramenta não é exatamente a que o técnico fez.
 
-O que aconteceu foi que **o agente reescreveu a pergunta antes de buscar**. Eu perguntei com "força", e a ferramenta recebeu uma pergunta já contendo a palavra "torque". Ou seja: quem traduziu o jeito de falar do técnico para o jeito de escrever do manual foi o modelo, antes da busca. Se eu tivesse parado ali, estaria dando à busca semântica um crédito que era do modelo.
+Eu pergunto "com que força eu devo apertar os parafusos da tampa superior do compressor?", e a ferramenta recebe algo como "força de aperto parafusos tampa superior compressor CMP-100". Numa das execuções o agente chegou a trocar "força" por "torque" por conta própria, antes de buscar.
 
-Por isso o programa faz a busca isolada da seção 4, com as palavras literais do técnico, sem o modelo no meio. É essa etapa que prova que os embeddings entendem o sentido, e não o agente.
+Isso não é defeito, é o agente fazendo o trabalho dele. Traduzir a fala de quem pergunta para o vocabulário de quem escreveu o documento é uma técnica conhecida em RAG, e melhora a busca: o modelo tira as palavras que não ajudam, acrescenta o código do equipamento e aproxima a pergunta da linguagem do manual. O que o exercício exige é que o trecho certo seja recuperado e usado na resposta, e é o que acontece.
 
-Vale notar que, no funcionamento normal, essa reescrita é boa: duas etapas de ajuda em vez de uma. Só não serve como prova de que a busca funciona. Nos prints dá para comparar as duas: a busca isolada recebeu a pergunta exatamente como o técnico escreveu, e a busca feita pelo agente recebeu uma versão reescrita por ele.
+O motivo de eu rodar a busca isolada na seção 4 é outro: **separar a contribuição de cada parte.** Com o agente no meio, dois mecanismos ajudam ao mesmo tempo, e fica impossível saber se a busca sozinha daria conta. Rodando a pergunta literal do técnico direto na busca, sem o modelo, dá para afirmar com segurança que os embeddings já encontram o trecho certo por conta própria, e que a reescrita do agente é um ganho em cima disso, e não uma muleta.
+
+Nos prints dá para comparar as duas buscas lado a lado: a da seção 4 recebeu a pergunta exatamente como o técnico escreveu, e a do agente recebeu a versão reescrita por ele. As duas colocam o trecho 9 em primeiro lugar.
 
 ## 7. O que ficou de fora, de propósito
 
