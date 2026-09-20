@@ -26,7 +26,7 @@ Essa divisão precisou ser dita em voz alta na instrução por causa do que o Ex
 
 **Por que o detalhe do manual longo vai para dentro do `acao_recomendada`** e não para um campo próprio: o enunciado pede o `DiagnosticoEquipamento` do Exercício 8, e eu não posso acrescentar campos a ele sem deixar de ser o modelo pedido. Então a contribuição da segunda fonte enriquece um campo existente.
 
-**Um risco conhecido, tratado.** Saída estruturada com ferramenta foi exatamente a combinação que entrou em laço no Exercício 7. Aqui há duas ferramentas, então o risco é maior. Por isso a execução tem limite de 8 rodadas, e o estouro desse limite é capturado: a tarefa termina em `error` explicando que o agente ficou chamando as ferramentas sem concluir, em vez de ficar presa para sempre. Na execução registrada o laço não aconteceu — a tarefa levou 4,7 segundos — mas a proteção está lá.
+**Um risco conhecido, tratado.** Saída estruturada com ferramenta foi exatamente a combinação que entrou em laço no Exercício 7. Aqui há duas ferramentas, então o risco é maior. Por isso a execução tem limite de 8 rodadas, e o estouro desse limite é capturado: a tarefa termina em `error` explicando que o agente ficou chamando as ferramentas sem concluir, em vez de ficar presa para sempre. Na execução registrada o laço não aconteceu, mas ela mostra que a preocupação era justa: o agente fez quatro idas ao modelo, com três chamadas de ferramenta, e levou 102 segundos. Ficou dentro das 8 rodadas, e sem esse teto uma execução que se perdesse não teria onde parar.
 
 ## 3. Os três endpoints e os códigos de resposta
 
@@ -46,19 +46,25 @@ O 202 do POST inclui o campo `onde_acompanhar`, com o caminho pronto do status. 
 
 A pergunta foi sobre o compressor CMP-100 com o erro E-102: "qual a causa, o que faço e que peças eu levo?".
 
-**1. Submissão.** O `POST /agent/run` respondeu **202 em 0,004 segundos**, com o `task_id` `88eed4bb`.
+**1. Submissão.** O `POST /agent/run` respondeu **202 em 0,005 segundos**, com o `task_id` `d38e7345` e o caminho `/agent/status/d38e7345` para acompanhar.
 
 **2. Pedido antes da hora, de propósito.** O cliente pediu o diagnóstico imediatamente e recebeu **409**, com a mensagem "o diagnóstico ainda não está pronto" e a orientação de acompanhar o status. Não é erro do serviço: é o recurso ainda não existir naquele estado.
 
-**3. Acompanhamento.** Três consultas de status: `pending`, `pending`, `done`. A tarefa levou 4,7 segundos.
+**3. Acompanhamento.** Foram **36 consultas de status**, de três em três segundos, ao longo de 105 segundos. As 35 primeiras devolveram `pending` e a última, `done`. A tarefa levou **102,2 segundos**.
 
-**4. Resultado.** O `GET /agent/response` devolveu **200** com o diagnóstico estruturado:
+Essa demora merece explicação, porque é bem maior que a de outras execuções do mesmo código. O log do serviço mostra o motivo: o agente não fez uma consulta a cada fonte, fez **três chamadas de ferramenta**. Consultou o manual com peças para o CMP-100, buscou no manual longo por "Como proceder com erro E-102 no CMP-100?" e, depois, buscou de novo por "Como substituir a válvula termostática do CMP-100?". Ou seja: ele leu a primeira resposta, percebeu que precisava de mais detalhe sobre o procedimento de troca, e voltou ao manual. Cada uma dessas idas custa uma chamada ao modelo e uma espera.
 
-O campo `codigo` veio CMP-100 e o `causa_provavel`, "válvula termostática travada", os dois do manual com peças. A lista de peças veio com dois itens, cada um com nome, quantidade e prioridade: válvula termostática 3/4, quantidade 1, prioridade alta; e jogo de juntas, quantidade 2, prioridade média. São exatamente os dados do manual.
+**4. Resultado.** O `GET /agent/response` devolveu **200** com o diagnóstico estruturado, e vale olhar campo a campo, porque as duas fontes aparecem misturadas nos dois campos de texto.
 
-E o `acao_recomendada` mostra as duas fontes juntas: começa com "substituir o componente e registrar a troca no histórico", que é a ação do manual com peças, e continua com o aviso de que o erro exige parada imediata porque a válvula travada impede a circulação de óleo pelo radiador — isso não está no manual com peças, veio da busca semântica no manual longo.
+O `codigo` veio CMP-100 e a lista de peças veio com dois itens, exatamente como no manual: válvula termostática 3/4, quantidade 1, prioridade alta; e jogo de juntas, quantidade 2, prioridade média. Isso é o manual com peças, do Exercício 8.
 
-O log do serviço confirma que as duas ferramentas foram chamadas: `consultar_manual_equipamento` para o CMP-100, e `buscar_no_manual` com a consulta "erro E-102 no CMP-100", que trouxe os trechos 11, 10, 12, 1 e 2 — a seção de alarmes do manual longo.
+O `causa_provavel` começa com "válvula termostática travada", que é o manual com peças, e continua explicando que com essa falha o óleo deixa de circular pelo radiador e a temperatura sobe rapidamente — isso é da seção de alarmes do manual longo.
+
+O `acao_recomendada` é onde a integração fica mais evidente. Ele reúne: o aviso de parada imediata, da seção de alarmes; a instrução de despressurizar a linha de ar e travar o disjuntor na posição desligada com etiqueta de identificação, que é da seção de parada programada; a ação do manual com peças, de substituir o componente e registrar a troca no histórico; e, por fim, a orientação de religar em vazio por quinze minutos conferindo temperatura, pressão, nível de óleo e ausência de vazamentos, que é do fim do manual longo.
+
+Nenhuma dessas três seções do manual longo estava no manual com peças, e o procedimento de troca não estava no manual longo. **A resposta final é uma costura de quatro trechos de duas fontes diferentes**, entregue num objeto estruturado que o sistema de despacho consegue ler campo a campo.
+
+Vale registrar que esse resultado é melhor do que o da execução que fiz enquanto desenvolvia, em que o agente fez uma busca só e levou 4,7 segundos. O mesmo código, na mesma pergunta, produz respostas de profundidades diferentes conforme o modelo decide voltar ou não ao manual. É a variação que já apareceu nos exercícios 6, 7 e 11, aqui com efeito no tempo de resposta: 4,7 segundos contra 102.
 
 ## 5. A decisão de projeto: o `task_id` que nunca existiu
 
@@ -110,10 +116,8 @@ Resolver isso não é questão de tratar melhor o erro: é trocar o dicionário 
 
 ## 7. Evidências
 
-*(inserir os prints depois de tirá-los)*
+São três prints. Os dois primeiros são a mesma execução, com os dois terminais lado a lado; o terceiro é o contraste que sustenta a seção 5.
 
-- Print – o fluxo completo, os dois terminais: `prints/...`
-  - No cliente: o 202 com o `task_id`, o 409 do pedido antes da hora, as consultas de status até `done`, o 200 com o diagnóstico e a lista de peças item a item, e por fim os dois 404 do `task_id` inventado.
-  - No serviço: as chamadas às duas ferramentas, `consultar_manual_equipamento` e `buscar_no_manual`, a tarefa terminando em `done`, e as linhas `[404] task_id desconhecido` sem nenhum rastro de exceção.
-- Print – o comportamento antigo, do Exercício 13: `prints/...`
-  - O mesmo pedido, de um `task_id` inexistente, recebendo `HTTP 500 Internal Server Error`, e o rastro da exceção no log do serviço. É o contraste que justifica a decisão da seção 5.
+- **`prints/Screenshot_20260920_133927.png`** – o começo do fluxo. No cliente: o 202 com o `task_id` `d38e7345` em 0,005 s, o 409 do pedido feito antes da hora, e as consultas de status começando. No serviço: o arranque indexando os 14 trechos, o `202 Accepted` antes do `[fundo] começou (pending)`, a chamada a `consultar_manual_equipamento` para o CMP-100 e a primeira busca no manual longo.
+- **`prints/Screenshot_20260920_133934.png`** – o fim da mesma execução. No serviço: a segunda busca, por "Como substituir a válvula termostática do CMP-100?", o `terminou em 102.2s -> done`, a entrega do diagnóstico, e as duas linhas `[404] task_id desconhecido: 00000000`, sem nenhum rastro de exceção. No cliente: a consulta 36 em `done`, o diagnóstico completo com os quatro campos e as duas peças, e os dois 404 com a explicação inteira.
+- **`prints/Screenshot_20260920_134059.png`** – o comportamento antigo, do Exercício 13, para comparar. O mesmo pedido de um `task_id` inexistente devolve `500 Internal Server Error`, e o log do serviço mostra o rastro da exceção ocupando a tela, com caminhos de arquivo e linhas de código do FastAPI e do uvicorn. É exatamente o que a decisão da seção 5 evita.
